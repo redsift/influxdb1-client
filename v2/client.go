@@ -46,6 +46,11 @@ type HTTPConfig struct {
 	// Client. If set, this option overrides InsecureSkipVerify.
 	TLSConfig *tls.Config
 
+	// MaxIdleConnsPerHost allos the user to set their own maximum idle
+	// (keep-alive) connections to keep per-host. If zero,
+	// DefaultMaxIdleConnsPerHost is used.
+	MaxIdleConnsPerHost int
+
 	// Proxy configures the Proxy function on the HTTP client.
 	Proxy func(req *http.Request) (*url.URL, error)
 }
@@ -107,7 +112,7 @@ func NewHTTPClient(conf HTTPConfig) (Client, error) {
 			InsecureSkipVerify: conf.InsecureSkipVerify,
 		},
 		Proxy: conf.Proxy,
-		MaxIdleConnsPerHost: 100,
+		MaxIdleConnsPerHost: conf.MaxIdleConnsPerHost,
 	}
 	if conf.TLSConfig != nil {
 		tr.TLSClientConfig = conf.TLSConfig
